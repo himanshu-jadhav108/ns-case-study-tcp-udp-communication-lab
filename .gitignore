@@ -1,0 +1,15 @@
+__pycache__/
+.pytest_cache/
+.venv/
+venv/
+received_files/
+local_observations.csv
+*.py[cod]
+*.pyo
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.egg-info/
+dist/
+build/

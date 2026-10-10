@@ -1,11 +1,11 @@
 # TCP & UDP Transport Layer Communication Lab
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-≥1.37-FF4B4B?style=flat&logo=streamlit&logoColor=white)](https://streamlit.io/)
-[![pandas](https://img.shields.io/badge/pandas-≥2.0-150458?style=flat&logo=pandas&logoColor=white)](https://pandas.pydata.org/)
-[![Test Suite](https://img.shields.io/badge/Unit%20Tests-9%20Passing-success?style=flat&logo=pytest&logoColor=white)](file:///d:/Case-Study/NS/tcp-udp-communication-lab/tests)
-[![Architecture](https://img.shields.io/badge/Architecture-Dual--Mode%20%28Cloud%20%2B%20Local%29-38bdf8?style=flat)](file:///d:/Case-Study/NS/tcp-udp-communication-lab/app.py)
-[![Curriculum](https://img.shields.io/badge/Domain-Computer%20Networks%20%26%20Security-slate?style=flat)](file:///d:/Case-Study/NS/tcp-udp-communication-lab)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.37%2B-FF4B4B?style=flat&logo=streamlit&logoColor=white)](https://streamlit.io/)
+[![pandas](https://img.shields.io/badge/pandas-2.0%2B-150458?style=flat&logo=pandas&logoColor=white)](https://pandas.pydata.org/)
+[![Unit Tests](https://img.shields.io/badge/Unit%20Tests-9%20Passing-brightgreen?style=flat&logo=pytest&logoColor=white)](#automated-verification--unit-testing)
+[![Architecture](https://img.shields.io/badge/Architecture-Dual--Mode-38bdf8?style=flat)](#system-architecture)
+[![Domain](https://img.shields.io/badge/Domain-Transport%20Layer-slate?style=flat)](https://github.com/himanshu-jadhav108/ns-case-study-tcp-udp-communication-lab)
 
 > An interactive dual-mode networking prototype bridging theoretical protocol analysis and real-world socket programming. Designed for Computer Networks & Security (Transport Layer curricula), featuring a cloud-safe Streamlit simulation suite and a robust, standalone Python BSD socket laboratory.
 
@@ -54,17 +54,17 @@ Teaching and experimenting with Transport Layer protocols (TCP and UDP) presents
 
 Rather than sacrificing either interactive visual learning or low-level systems programming, this repository resolves the dilemma through an **intentional dual-mode architecture**:
 
-1. **Cloud Simulation Mode ([app.py](file:///d:/Case-Study/NS/tcp-udp-communication-lab/app.py) & [simulator.py](file:///d:/Case-Study/NS/tcp-udp-communication-lab/simulator.py)):**
+1. **Cloud Simulation Mode ([app.py](app.py) & [simulator.py](simulator.py)):**
    - Completely decoupled from OS socket listeners.
    - Executes a deterministic, seeded network-condition simulator modeling propagation delay, serialization delay, transmission jitter, and packet loss.
    - Provides step-by-step visualizations of the TCP three-way handshake and sliding window flow control (`min(rwnd, cwnd, queued)`).
    - Generates downloadable CSV observation records with simulated telemetry.
-2. **Local Real-Socket Laboratory ([local_lab/](file:///d:/Case-Study/NS/tcp-udp-communication-lab/local_lab)):**
+2. **Local Real-Socket Laboratory ([local_lab/](local_lab)):**
    - Independent Python standard library implementation (`socket`, `struct`, `threading`, `hashlib`).
    - Runs on loopback (`127.0.0.1`) or across devices on a trusted private LAN.
    - Implements custom binary length-prefixed message framing over TCP with SHA-256 digest validation and traversal-resistant file ingestion.
    - Implements UDP datagram transmission with application-layer echo-ACK round-trip time (RTT) calculation and sequence tracking.
-   - Appends measured operational logs directly to [local_observations.csv](file:///d:/Case-Study/NS/tcp-udp-communication-lab/local_lab/local_observations.csv).
+   - Appends measured operational logs directly to [local_observations.csv](local_lab/local_observations.csv).
 
 ---
 
@@ -123,7 +123,7 @@ flowchart TB
 
 ## Key Features
 
-### 1. Cloud Simulation Suite ([app.py](file:///d:/Case-Study/NS/tcp-udp-communication-lab/app.py))
+### 1. Cloud Simulation Suite ([app.py](app.py))
 
 * **Interactive Three-Way Handshake Step-Through:**
   Step through `SYN`, `SYN-ACK`, and `ACK` phases with sequence number progression (`ISN x`, `ISN y`, `ack = x + 1`, `ack = y + 1`), reinforcing connection setup dynamics.
@@ -138,7 +138,7 @@ flowchart TB
 * **Observation Record Export:**
   One-click CSV generation packaging test conditions and individual segment delivery statuses for academic lab reporting.
 
-### 2. Local Real-Socket Laboratory ([local_lab/](file:///d:/Case-Study/NS/tcp-udp-communication-lab/local_lab))
+### 2. Local Real-Socket Laboratory ([local_lab/](local_lab))
 
 * **TCP Reliable Message & File Transfer:**
   Establishes point-to-point connections over TCP port 5050 with explicit length framing and acknowledgment receipts.
@@ -151,7 +151,7 @@ flowchart TB
 * **Round-Trip Time (RTT) & Loss Detection:**
   Server reflects an application-level echo packet containing arrival timestamps, enabling the client to measure true RTT and detect asymmetric channel loss.
 * **Unified Telemetry Logging:**
-  Appends structured JSON and CSV records (`timestamp_utc`, `protocol`, `rtt_ms`, `throughput_bytes_s`, `duration_s`) to [local_observations.csv](file:///d:/Case-Study/NS/tcp-udp-communication-lab/local_lab/local_observations.csv).
+  Appends structured JSON and CSV records (`timestamp_utc`, `protocol`, `rtt_ms`, `throughput_bytes_s`, `duration_s`) to [local_observations.csv](local_lab/local_observations.csv).
 
 ---
 
@@ -161,7 +161,7 @@ flowchart TB
 
 Because TCP is an unstructured, continuous byte stream without inherent message boundaries, higher-level applications must implement framing to avoid packet concatenation or fragmentation errors.
 
-This laboratory implements a bounded, 3-part binary wire frame in [protocol.py](file:///d:/Case-Study/NS/tcp-udp-communication-lab/local_lab/protocol.py):
+This laboratory implements a bounded, 3-part binary wire frame in [protocol.py](local_lab/protocol.py):
 
 ```
 ┌───────────────────────────┬───────────────────────────────────┬───────────────────────────┐
@@ -175,7 +175,7 @@ This laboratory implements a bounded, 3-part binary wire frame in [protocol.py](
 1. Serialize metadata header to UTF-8 encoded JSON (bounded to `MAX_HEADER_BYTES = 16,384`).
 2. Prepend a 4-byte unsigned integer `struct.pack("!I", len(encoded_header))`.
 3. Append raw binary payload (bounded to `DEFAULT_MAX_TRANSFER_BYTES = 10,485,760`).
-4. On the receiving end, [recv_exact()](file:///d:/Case-Study/NS/tcp-udp-communication-lab/local_lab/protocol.py#L20) loops until precisely 4 bytes are received, unpacks the header length, reads exactly `N` header bytes, parses the JSON dictionary, and finally reads exactly `M` payload bytes.
+4. On the receiving end, [recv_exact()](local_lab/protocol.py#L20) loops until precisely 4 bytes are received, unpacks the header length, reads exactly `N` header bytes, parses the JSON dictionary, and finally reads exactly `M` payload bytes.
 
 ```mermaid
 sequenceDiagram
@@ -192,7 +192,7 @@ sequenceDiagram
 
 ### UDP Telemetry & Echo-ACK Protocol
 
-UDP is connectionless and does not provide built-in acknowledgments or flow control. To measure network performance in [client.py](file:///d:/Case-Study/NS/tcp-udp-communication-lab/local_lab/client.py#L40) and [server.py](file:///d:/Case-Study/NS/tcp-udp-communication-lab/local_lab/server.py#L68), an application-layer echo loop is implemented:
+UDP is connectionless and does not provide built-in acknowledgments or flow control. To measure network performance in [client.py](local_lab/client.py#L40) and [server.py](local_lab/server.py#L68), an application-layer echo loop is implemented:
 
 ```mermaid
 sequenceDiagram
@@ -212,10 +212,10 @@ sequenceDiagram
 
 ### Defensive File Ingestion & Security Hardening
 
-The server script ([server.py](file:///d:/Case-Study/NS/tcp-udp-communication-lab/local_lab/server.py)) incorporates defensive engineering principles to prevent common network vulnerabilities:
+The server script ([server.py](local_lab/server.py)) incorporates defensive engineering principles to prevent common network vulnerabilities:
 
 1. **Path Traversal Prevention:**
-   The `sanitize_filename()` function in [protocol.py](file:///d:/Case-Study/NS/tcp-udp-communication-lab/local_lab/protocol.py#L59) strictly rejects names containing forward slashes (`/`), backslashes (`\`), or parent directory tokens (`..`). Filenames are normalized against regex `[^A-Za-z0-9._-]` and limited to 128 characters.
+   The `sanitize_filename()` function in [protocol.py](local_lab/protocol.py#L59) strictly rejects names containing forward slashes (`/`), backslashes (`\`), or parent directory tokens (`..`). Filenames are normalized against regex `[^A-Za-z0-9._-]` and limited to 128 characters.
 2. **Transfer Caps & Resource Exhaustion Protection:**
    Transfers exceeding the 10 MiB limit (`DEFAULT_MAX_TRANSFER_BYTES`) are immediately aborted, preventing memory overflow or disk exhaustion.
 3. **Collision Resistance:**
@@ -441,15 +441,15 @@ python -m unittest discover -s tests -v
 
 | Test Module | Test Case | Target Capability Verified |
 |---|---|---|
-| [test_protocol.py](file:///d:/Case-Study/NS/tcp-udp-communication-lab/tests/test_protocol.py) | `test_frame_round_trip` | Validates framing and parsing of 4-byte prefixed JSON + payload across mock sockets |
-| [test_protocol.py](file:///d:/Case-Study/NS/tcp-udp-communication-lab/tests/test_protocol.py) | `test_frame_size_limit` | Asserts `ProtocolError` is raised when inbound frames exceed memory allocation limits |
-| [test_protocol.py](file:///d:/Case-Study/NS/tcp-udp-communication-lab/tests/test_protocol.py) | `test_filename_sanitization_and_traversal_rejection` | Rejects directory traversal payloads (`../secret`, `a\b.txt`, `..`, empty strings) |
-| [test_protocol.py](file:///d:/Case-Study/NS/tcp-udp-communication-lab/tests/test_protocol.py) | `test_hash_verification` | Verifies SHA-256 computation against known reference digest |
-| [test_protocol.py](file:///d:/Case-Study/NS/tcp-udp-communication-lab/tests/test_protocol.py) | `test_file_saved_under_receive_directory_and_acknowledged` | End-to-end socket transaction: receipt, hash validation, disk writing, and JSON ACK |
-| [test_metrics.py](file:///d:/Case-Study/NS/tcp-udp-communication-lab/tests/test_metrics.py) | `test_udp_sequence_metrics` | Validates set-based sequence tracking (`lost`, `received`, `unexpected`, `loss_percent`) |
-| [test_metrics.py](file:///d:/Case-Study/NS/tcp-udp-communication-lab/tests/test_metrics.py) | `test_throughput` | Verifies byte-rate math, zero-duration infinite speed handling, and negative guards |
-| [test_simulator.py](file:///d:/Case-Study/NS/tcp-udp-communication-lab/tests/test_simulator.py) | `test_seeded_results_are_deterministic` | Proves identical pseudorandom seeds yield bit-for-bit identical simulated packet delays |
-| [test_simulator.py](file:///d:/Case-Study/NS/tcp-udp-communication-lab/tests/test_simulator.py) | `test_zero_loss_and_invalid_inputs` | Verifies zero-loss invariants and strict boundary rejection (`packet_count=0`, `loss > 1.0`) |
+| [test_protocol.py](tests/test_protocol.py) | `test_frame_round_trip` | Validates framing and parsing of 4-byte prefixed JSON + payload across mock sockets |
+| [test_protocol.py](tests/test_protocol.py) | `test_frame_size_limit` | Asserts `ProtocolError` is raised when inbound frames exceed memory allocation limits |
+| [test_protocol.py](tests/test_protocol.py) | `test_filename_sanitization_and_traversal_rejection` | Rejects directory traversal payloads (`../secret`, `a\b.txt`, `..`, empty strings) |
+| [test_protocol.py](tests/test_protocol.py) | `test_hash_verification` | Verifies SHA-256 computation against known reference digest |
+| [test_protocol.py](tests/test_protocol.py) | `test_file_saved_under_receive_directory_and_acknowledged` | End-to-end socket transaction: receipt, hash validation, disk writing, and JSON ACK |
+| [test_metrics.py](tests/test_metrics.py) | `test_udp_sequence_metrics` | Validates set-based sequence tracking (`lost`, `received`, `unexpected`, `loss_percent`) |
+| [test_metrics.py](tests/test_metrics.py) | `test_throughput` | Verifies byte-rate math, zero-duration infinite speed handling, and negative guards |
+| [test_simulator.py](tests/test_simulator.py) | `test_seeded_results_are_deterministic` | Proves identical pseudorandom seeds yield bit-for-bit identical simulated packet delays |
+| [test_simulator.py](tests/test_simulator.py) | `test_zero_loss_and_invalid_inputs` | Verifies zero-loss invariants and strict boundary rejection (`packet_count=0`, `loss > 1.0`) |
 
 ---
 
@@ -491,11 +491,11 @@ Both `local_observations.csv` and `simulated_observations.csv` export records ad
 
 The web dashboard is fully configured for deployment on **Streamlit Community Cloud**.
 
-Detailed instructions and deployment verification checklists are available in [DEPLOYMENT.md](file:///d:/Case-Study/NS/tcp-udp-communication-lab/DEPLOYMENT.md).
+Detailed instructions and deployment verification checklists are available in [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ### Quick Deployment Checklist:
 
-1. **Repository Setup:** Ensure your GitHub repository contains [app.py](file:///d:/Case-Study/NS/tcp-udp-communication-lab/app.py), [simulator.py](file:///d:/Case-Study/NS/tcp-udp-communication-lab/simulator.py), [requirements.txt](file:///d:/Case-Study/NS/tcp-udp-communication-lab/requirements.txt), [.streamlit/config.toml](file:///d:/Case-Study/NS/tcp-udp-communication-lab/.streamlit/config.toml), and the [local_lab/](file:///d:/Case-Study/NS/tcp-udp-communication-lab/local_lab) folder.
+1. **Repository Setup:** Ensure your GitHub repository contains [app.py](app.py), [simulator.py](simulator.py), [requirements.txt](requirements.txt), [.streamlit/config.toml](.streamlit/config.toml), and the [local_lab/](local_lab) folder.
 2. **Platform Configuration:**
    - Platform: [Streamlit Community Cloud](https://share.streamlit.io/)
    - Main file path: `app.py`

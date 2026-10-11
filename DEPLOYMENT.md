@@ -35,7 +35,7 @@ git add app.py simulator.py requirements.txt README.md DEPLOYMENT.md \
         .gitignore .streamlit local_lab tests
 git commit -m "Initial: TCP/UDP Communication Lab"
 git branch -M main
-git remote add origin https://github.com/himanshu-jadhav108/ns-case-study-tcp-udp-communication-lab.git
+git remote add origin https://github.com/YOUR-USERNAME/YOUR-REPO.git
 git push -u origin main
 ```
 
@@ -67,7 +67,7 @@ Never hardcode secrets in source files.
 2. Click **Create app**.
 3. Select **From an existing repository**.
 4. Fill in:
-   - **Repository:** `himanshu-jadhav108/ns-case-study-tcp-udp-communication-lab`
+   - **Repository:** `YOUR-USERNAME/YOUR-REPO`
    - **Branch:** `main`
    - **Main file path:** `app.py`
 5. Click **Deploy**.
